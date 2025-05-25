@@ -11,10 +11,11 @@ from telegram.ext import (
 )
 
 TELEGRAM_BOT_TOKEN = "7751616332:AAHdlxK6eamRULFYslqCos8RKZFBGxmZ_zU"
+user_id = 0
 
 def load_deadlines():
     try:
-        response = requests.get("https://localhost:8080/api/v1/deadlines/{user_id}")
+        response = requests.get(f"https://localhost:8080/api/v1/deadlines/{user_id}")
         response.raise_for_status()
         return response.json()
     except Exception as e:
@@ -111,6 +112,9 @@ async def periodic_check(context: CallbackContext):
         await check_all_deadlines(context, chat_id)
 
 async def start(update: Update, context: CallbackContext):
+    user = update.effective_user
+    global user_id
+    user_id = user.id
     await update.message.reply_text(
         "Привет! Я бот для отслеживания дедлайнов.\n"
         "Используй /deadlines чтобы проверить все свои дедлайны."
